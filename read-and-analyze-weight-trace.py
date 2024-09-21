@@ -31,4 +31,4 @@ def consolidate_weights_from_directory(directory, output_file):
 
 
 if __name__ == '__main__':
-    consolidate_weights_from_directory('data', 'consolidated_weights.npz')
+    consolidate_weights_from_directory('data', 'results/consolidated_weights.npz')

@@ -167,6 +167,15 @@ def main(args):
     net.train((Xtrain, Ttrain), (Xtest, Ttest),
               epochs=args.epochs, shuffle=True)
 
+
+    # Storing errors and accuracies
+    np.savez('results/errors_and_accuracies.npz',
+             train_error_trace=net.train_error_trace,
+             train_acc_trace=net.train_acc_trace,
+             val_error_trace=net.val_error_trace,
+             val_acc_trace=net.val_acc_trace)
+
+
     # !plotting
     fig, ax = plt.subplots(figsize=(5, 3.5))
     lw = 2
