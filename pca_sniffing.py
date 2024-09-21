@@ -2,6 +2,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
 
@@ -70,6 +71,29 @@ def analyze_by_pca(array_data):
     plot_3d(pca_result)
 
 
+def analyze_t_sne(array_data):
+    tsne = TSNE(n_components=3, random_state=42)
+    tsne_results = tsne.fit_transform(array_data)
+
+    plot_t_sne(tsne_results, 1, 2)
+    plot_t_sne(tsne_results, 1, 3)
+    plot_t_sne(tsne_results, 2, 3)
+
+
+def plot_t_sne(tsne_results, dim1, dim2 ):
+    # Plot the t-SNE results
+    plt.clf()
+    plt.figure(figsize=(10, 8))
+    plt.scatter(tsne_results[:, dim1-1], tsne_results[:, dim2-1], c=range(len(tsne_results)), cmap='viridis')
+    plt.colorbar(label='Index (row number in array)')
+    plt.title(f't-SNE visualization of the evolution of the process ({dim1} vs {dim2})')
+    plt.xlabel(f't-SNE component {dim1}')
+    plt.ylabel(f't-SNE component {dim2}')
+    # Optionally, connect the points to visualize the path
+    plt.plot(tsne_results[:,  dim1-1], tsne_results[:, dim2-1], color='black', alpha=0.5)
+    plt.show()
+
+
 if __name__ == '__main__':
 
     # Load the .npz file
@@ -84,6 +108,9 @@ if __name__ == '__main__':
     # Don't forget to close the file after loading
     data.close()
 
-    analyze_by_pca(array_data)
+    # analyze_by_pca(array_data)
+
+    # Apply t-SNE to project the data into 2D space
+    analyze_t_sne(array_data)
 
 
