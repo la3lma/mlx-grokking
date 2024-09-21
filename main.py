@@ -51,6 +51,7 @@ class NeuralNetwork:
         self.loss_fn = nn.losses.cross_entropy if classification else nn.losses.mse_loss
         self.batch_size = batch_size
 
+
         # bookkeeping
         self.train_error_trace = []
         self.train_acc_trace = []
@@ -68,6 +69,11 @@ class NeuralNetwork:
         correct = mx.sum(mx.argmax(Y, axis=1) == T)
         return loss, correct
 
+    def save_weights(self, epoch, batch):
+        filename = f'data/weights_trace_{epoch:05d}.npz'
+        self.model.state.save_weights(filename)#
+        # np.savez(filename, **self.model.state)
+
     def train(self, train_data, val_data, epochs=5, shuffle=True):
         state = [self.model.state, self.optimizer.state, mx.random.state]
 
@@ -78,8 +84,13 @@ class NeuralNetwork:
             self.optimizer.update(self.model, grads)
             return loss, correct
 
+        # open weights trace file, if specified
+
+
+        epoch = 0
         epoch_bar = tqdm(range(epochs), desc='Training', unit='epoch')
         for _ in epoch_bar:
+            epoch += 1
             self.model.train()
             if shuffle:
                 inds = mx.array(np.random.permutation(train_data[0].shape[0]))
@@ -91,6 +102,8 @@ class NeuralNetwork:
                 mx.eval(state)
                 total_loss += loss.item() * X.shape[0]
                 total_correct += correct.item()
+
+            self.save_weights(epoch, 0)
 
             avg_train_loss = total_loss / train_data[0].shape[0]
             avg_train_acc = total_correct / train_data[0].shape[0]
